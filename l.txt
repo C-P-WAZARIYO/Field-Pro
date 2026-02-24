@@ -1,0 +1,90 @@
+
+
+# 🏗️ Master Blueprint: AuthX Enterprise (Collection & Audit ERP)
+
+## 1. System Overview
+
+A high-security MERN stack platform (Prisma + PostgreSQL) for large-scale financial recovery management. It features automated task allocation, geospatial verification, dynamic payout calculation, and a community blogging module.
+
+---
+
+## 2. Role-Based Access Control (RBAC) & Flow
+
+* **Super Admin:** Full system control, role promotion, and audit log access.
+* **Manager:** Configures **Payout Grids** (Complex tree structures for earnings), manages capping, and audits high-level performance.
+* **Supervisor (Jaipur Lead):** Uploads/Publishes cases, rejects fake visits, monitors "Promise to Pay" (PTP) alerts, and tracks team ROI.
+* **Field Executive:** Mobile-first access to assigned cases, GPS-verified feedback submission, and personal performance tracking.
+* **Analytic:** View-only access to performance charts and trends.
+* **Guest/Blogger:** Access to the community blog module only.
+
+---
+
+## 3. Core Backend Modules (Node.js, Prisma, PostgreSQL)
+
+### A. The Case Engine (50k+ Rows)
+
+* **Upload Logic:** Supervisor uploads Excel with `emp_id`. Two modes:
+* *Modification:* Draft mode for review/editing.
+* *Original:* Triggers **Nodemailer** to notify executives and pushes cases to their dashboards.
+
+
+* **Allocation:** One-to-many distribution based on `emp_id`. Executives see *only* their assigned cases.
+* **Performance Tracking:** Backend calculates "Count-wise" (Volume) vs. "POS-wise" (Value) metrics across BKTs, Products, and Banks.
+
+### B. Payout & Earning Logic (The Tree Structure)
+
+* **Dynamic Grid:** Tree-based structure: `Bank -> Product -> BKT -> Target % -> Payout`.
+* **Calculations:** Handles Fixed vs. Percentage payouts, specific bonuses for "Norm" and "Rollback" cases, and earnings capping.
+* **Aggregation:** Auto-concatenates multiple feedbacks for the same `Account ID` into a single history.
+
+### C. Security & Geospatial Audit
+
+* **Security:** **Argon2id** for hashing passwords and sensitive form data. **JWT (Access + Refresh)** for sessions.
+* **Geospatial Audit:** Compares GPS coordinates of the current visit against the customer's known address and previous visit history.
+* **Alerts:** Flags "Fake Visits" if the distance is  or if coordinates mismatch significantly for the same location.
+* **Device Fingerprinting:** Captures device details, IP, and location on every login and submission.
+
+---
+
+## 4. Frontend Modules (React + Tailwind + Charts.js/Recharts)
+
+### A. Executive Dashboard (Mobile Optimized)
+
+* **Filters:** Deep filtering by BKT (0-3+), NPA/PNPA status, Priority, and Code (PTP/RTP).
+* **Feedback Form:** Mandatory fields: Visit Code, Meeting Place (Distance/Location), Asset Status, Next Action Date (PTP), and **GPS Photo Upload** (AWS S3).
+* **Performance View:** Personal Pie/Bar charts that update dynamically based on filters (Bank/Product/BKT).
+
+### B. Supervisor & Admin Dashboard
+
+* **PTP Alerts:** Notifications for "Today’s PTP" and "Broken PTP" (No action taken on yesterday's date).
+* **Audit Queue:** Review field visits; manually "Reject" or mark as "Fake."
+* **Reports:** One-click Excel downloads for daily, weekly, or monthly performance.
+
+### C. The Payout Form (Manager View)
+
+* **The Grid Builder:** Interface to input multi-tier targets (e.g.,  target pays ,  pays ).
+* **Copy Logic:** Ability to copy payout structures between similar products to save time.
+
+---
+
+## 5. Community Blog Module
+
+* **Access:** Open to all registered users.
+* **Features:** Create, Like, and Comment on blogs. View "Who Liked" and "Who Commented."
+* **State:** Seeded with 100 pre-blogs to ensure immediate engagement.
+* **Isolation:** Blog activities do not grant access to the "Collection/Case" side of the app.
+
+---
+
+## 6. Database Schema Additions (Prisma)
+
+You will need models for:
+
+* `Case`: All financial data and `emp_id` linkage.
+* `Feedback`: Linked to `Case`, storing GPS, Photo URL, and PTP dates.
+* `PayoutGrid`: Storing the complex Bank/Product/BKT tree.
+* `AuditLog`: Tracking all system actions.
+* `Blog`: Content, Likes, and Comments.
+
+---
+

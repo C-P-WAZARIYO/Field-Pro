@@ -1,0 +1,219 @@
+/* ===============================
+   EMPLOYEE VIEW CORE STYLES
+================================ */
+
+.employee-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .employee-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        align-items: start;
+    }
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+/* Allocation Cards */
+.task-card {
+    background: #020617;
+    border: 1px solid #1e293b;
+    padding: 1rem;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.task-name { font-weight: 700; color: #cbd5e1; font-size: 0.9rem; }
+.task-status { font-size: 0.65rem; color: #38bdf8; font-weight: 800; text-transform: uppercase; display: block; }
+.dl-icon-btn { background: #1e293b; border: none; padding: 0.5rem; border-radius: 10px; cursor: pointer; }
+
+/* Camera UI - High Interaction */
+.photo-upload-zone { margin-bottom: 1.5rem; }
+.camera-box {
+    width: 100%;
+    min-height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+}
+
+.camera-box.pending { border: 2px dashed #334155; }
+.camera-box.captured { border: 2px solid #38bdf8; }
+
+.camera-ui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.camera-ui input { display: none; }
+.camera-plus { font-size: 2.5rem; margin-bottom: 0.5rem; animation: pulse 2s infinite; }
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.6; }
+}
+
+.photo-wrap { position: relative; width: 100%; height: 250px; }
+.captured-img { width: 100%; height: 100%; object-fit: cover; }
+
+.meta-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #38bdf8;
+    display: flex;
+    flex-direction: column;
+}
+
+.clear-photo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.7rem;
+}
+
+/* Form Styling */
+.employee-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.field-group { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+
+@media (min-width: 640px) {
+    .field-group { grid-template-columns: 1fr 1fr; }
+}
+
+.input-box { display: flex; flex-direction: column; gap: 0.5rem; }
+.full-width { grid-column: 1 / -1; }
+
+.emp-input, .emp-select, .emp-area {
+    background: #020617;
+    border: 1px solid #334155;
+    padding: 0.9rem 1.2rem;
+    border-radius: 14px;
+    color: white;
+    font-size: 16px; /* Prevents auto-zoom on mobile */
+    outline: none;
+    transition: 0.3s;
+}
+
+.emp-input:focus, .emp-select:focus, .emp-area:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.emp-area { min-height: 120px; line-height: 1.5; }
+
+/* Asset & Radio Styling */
+.asset-card {
+    background: rgba(30, 41, 59, 0.3);
+    padding: 1.25rem;
+    border-radius: 18px;
+    border: 1px solid #1e293b;
+}
+
+.radio-flex { display: flex; gap: 1rem; margin: 1rem 0; }
+.radio-btn {
+    flex: 1;
+    background: #020617;
+    border: 1px solid #334155;
+    padding: 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nested-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Final Submit Action */
+.submit-heavy-btn {
+    width: 100%;
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0284c7, #4f46e5);
+    color: white;
+    font-weight: 900;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+    transition: 0.3s;
+}
+
+.submit-heavy-btn:disabled {
+    background: #1e293b;
+    color: #475569;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.submit-heavy-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+}
+
+/* Performance Tab Styles */
+.performance-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.perf-card { background: #0b1220; padding: 12px; border-radius: 10px; border: 1px solid #1f2937; }
+.perf-card.success { background: linear-gradient(90deg,#064e3b,#065f46); color: #ecfccb; }
+.perf-value { font-size: 1.4rem; font-weight: 800; }
+.perf-label { font-size: 0.8rem; color: #94a3b8; }
+
+.card { background: #071029; border: 1px solid #1f2937; padding: 12px; border-radius: 12px; margin-bottom: 12px; }
+.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.summary-item { display: flex; flex-direction: column; gap: 4px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 8px; }
+.category-breakdown { display: flex; flex-direction: column; gap: 8px; }
+.breakdown-row { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 6px; background: rgba(255,255,255,0.01); }
+.breakdown-row.small { font-size: 0.85rem; padding-left: 20px; }
+.bank-card { padding: 12px; }
+.bank-header { display:flex; justify-content: space-between; align-items: center; }
+.bank-stats small { display:inline-block; margin-right:8px; color: #94a3b8; }
+.bank-body { margin-top: 8px; display:flex; flex-direction: column; gap:8px; }
+.product-card { padding:8px; background: rgba(255,255,255,0.02); border-radius:8px; }
+.product-stats small { margin-right: 8px; color: #94a3b8; }
+
+.btn { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; }
+.btn-primary { background: linear-gradient(90deg,#0ea5e9,#6366f1); color: white; }

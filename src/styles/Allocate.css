@@ -1,0 +1,174 @@
+/* ===== Root Container ===== */
+.allocate-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at top, #020617, #000000);
+  padding: clamp(1rem, 4vw, 3rem);
+  color: #e5e7eb;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scroll on the whole page */
+}
+
+/* ===== Card Wrapper ===== */
+.allocate-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1600px; 
+  margin: 0 auto;
+  flex-grow: 1; 
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 28px;
+  padding: clamp(1.2rem, 3vw, 2.5rem);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+}
+
+/* ===== Header ===== */
+.allocate-header h1 {
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.allocate-header p {
+  margin-top: 0.6rem;
+  color: #94a3b8;
+  max-width: 720px;
+}
+
+/* ===== Grid Layout (Containment Fixed) ===== */
+.allocate-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* Force containment */
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .allocate-grid {
+    /* minmax(0, ...) is the secret to stopping the leak */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: stretch;
+  }
+}
+
+/* ===== Section (Containment Fixed) ===== */
+.allocate-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Allows content to shrink */
+  width: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 24px;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  box-sizing: border-box;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.allocate-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(2, 132, 199, 0.12);
+}
+
+/* ===== Labels & Mode Buttons ===== */
+.allocate-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.mode-btn {
+  padding: 0.9rem 0.2rem;
+  border-radius: 18px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: #020617;
+  color: #94a3b8;
+  cursor: pointer;
+  white-space: nowrap; /* Keep text on one line */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Shrink text if button gets too small */
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, #0284c7, #4f46e5);
+  color: white;
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+}
+
+/* ===== Inputs ===== */
+.allocate-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: #020617;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #e5e7eb;
+}
+
+/* ===== Upload Box (Leak Protection) ===== */
+.upload-box {
+  border: 2px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 22px;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Clip anything trying to leak out */
+}
+
+.upload-box strong {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  word-break: break-all; /* Breaks long filenames so they don't push width */
+  color: #38bdf8;
+}
+
+.upload-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.6rem;
+}
+
+/* ===== Execute Button ===== */
+.execute-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1.1rem;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: 900;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #0284c7, #4f46e5);
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* Spacing Helpers */
+.space-y-8 > * + * { margin-top: 2rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-5 > * + * { margin-top: 1.25rem; }

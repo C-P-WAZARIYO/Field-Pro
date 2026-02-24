@@ -1,0 +1,80 @@
+/* Home.css */
+
+@import "tailwindcss";
+.home-wrapper {
+  @apply bg-slate-50 min-h-screen font-sans;
+}
+
+.navbar {
+  @apply flex justify-between items-center px-10 py-4 bg-white sticky top-0 z-50 shadow-sm;
+}
+
+.logo-text {
+  @apply text-2xl font-bold text-slate-800 tracking-tight;
+}
+
+.nav-links {
+  @apply flex items-center gap-8;
+}
+
+.nav-item {
+  @apply text-slate-600 font-medium hover:text-blue-600 transition;
+}
+
+.nav-btn {
+  @apply px-5 py-2 rounded-lg font-semibold transition;
+}
+
+.signup {
+  @apply border border-blue-600 text-blue-600 hover:bg-blue-50;
+}
+
+.login {
+  @apply bg-blue-600 text-white hover:bg-blue-700 shadow-md;
+}
+
+/* Hero Section Styles */
+.hero {
+  @apply flex flex-col lg:flex-row items-center justify-between px-10 py-20 gap-10;
+}
+
+.hero-content h1 {
+  @apply text-5xl font-extrabold text-slate-900 leading-tight mb-6;
+}
+
+.highlight {
+  @apply text-blue-600;
+}
+
+.hero-content p {
+  @apply text-xl text-slate-600 mb-8 max-w-lg;
+}
+
+.hero-btns {
+  @apply flex gap-4;
+}
+
+.btn-primary {
+  @apply bg-slate-900 text-white px-8 py-3 rounded-md font-bold hover:bg-slate-800;
+}
+
+.btn-secondary {
+  @apply border border-slate-300 px-8 py-3 rounded-md font-bold text-slate-700 hover:bg-slate-100;
+}
+
+/* Info Cards */
+.info-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8 px-10 py-16 bg-white;
+}
+
+.info-card {
+  @apply p-8 border border-slate-100 rounded-2xl bg-slate-50 hover:shadow-xl transition-all duration-300;
+}
+
+.info-card .icon {
+  @apply text-3xl mb-4;
+}
+
+.info-card h3 {
+  @apply text-xl font-bold mb-2 text-slate-800;
+}

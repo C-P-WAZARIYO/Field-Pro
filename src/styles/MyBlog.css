@@ -1,0 +1,167 @@
+/* Page */
+.myblogs-page {
+  min-height: 100vh;
+  background: #f7f7f7;
+  color: #111;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* Container */
+.myblogs-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 32px 120px;
+}
+
+/* Header */
+.myblogs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 60px;
+}
+
+.myblogs-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.myblogs-header p {
+  margin-top: 6px;
+  color: #555;
+  max-width: 480px;
+}
+
+.signature {
+  color: #000;
+  font-weight: 600;
+}
+
+/* Buttons */
+.new-blog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.new-blog-btn:hover {
+  opacity: 0.9;
+}
+
+.new-blog-btn.large {
+  margin-top: 24px;
+  padding: 14px 24px;
+  font-size: 1rem;
+}
+
+/* Content */
+.myblogs-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Blog row */
+.myblog-row {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.myblog-row:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Info */
+.myblog-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.dot {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Status */
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.status.published {
+  background: #e7f8ef;
+  color: #166534;
+}
+
+.status.draft {
+  background: #f1f1f1;
+  color: #555;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #666;
+}
+
+.actions button:hover {
+  background: #f1f1f1;
+  color: #111;
+}
+
+.actions .danger:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Empty state */
+.empty-state {
+  margin-top: 120px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #555;
+  max-width: 420px;
+  margin: 0 auto;
+}

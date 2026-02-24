@@ -1,0 +1,575 @@
+// AuthX Database Schema
+// Production-grade authentication and authorization system
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User model - Core entity for authentication
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String   @unique // No two accounts with same phone
+  username      String    @unique
+  password      String
+  emp_id        String?  @unique
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  isActive      Boolean   @default(true) @map("is_active")
+  isVerified    Boolean   @default(false) @map("is_verified")
+  lastLoginAt   DateTime? @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+
+  // Relations
+  posts         Post[]
+  postLikes     PostLike[] @relation("PostLikes")
+  postComments  PostComment[] @relation("PostComments")
+  roles         UserRole[]
+  feedbacks     Feedback[]
+  refreshTokens RefreshToken[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  cases         Case[]
+  performanceMetrics PerformanceMetric[]
+  caseUploads   CaseUpload[]
+  subscription  Subscription?
+  referralsAsReferrer ReferralShare[] 
+  referralCodesCreated Referral[] @relation("UserAsReferrer")
+  referralCodesReceived Referral[] @relation("UserAsReferee")
+  serviceControl EmployeeServiceControl?
+
+  @@map("users")
+}
+
+// Role model - Defines user roles for RBAC
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  isDefault   Boolean  @default(false) @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+// Permission model - Granular access control
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  resource    String   // e.g., "users", "posts", "settings"
+  action      String   // e.g., "create", "read", "update", "delete"
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  roles RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+// UserRole - Many-to-many relationship between users and roles
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  assignedAt DateTime @default(now()) @map("assigned_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+// RolePermission - Many-to-many relationship between roles and permissions
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  assignedAt   DateTime @default(now()) @map("assigned_at")
+
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// RefreshToken - Manages refresh tokens for secure token rotation
+model RefreshToken {
+  id          String    @id @default(uuid())
+  token       String    @unique
+  userId      String    @map("user_id")
+  expiresAt   DateTime  @map("expires_at")
+  isRevoked   Boolean   @default(false) @map("is_revoked")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  userAgent   String?   @map("user_agent")
+  ipAddress   String?   @map("ip_address")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+// Session - Tracks active user sessions
+model Session {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  userAgent   String?   @map("user_agent")
+  ipAddress   String?   @map("ip_address")
+  isActive    Boolean   @default(true) @map("is_active")
+  expiresAt   DateTime  @map("expires_at")
+  lastActiveAt DateTime @default(now()) @map("last_active_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// AuditLog - Tracks security-related events
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  action    String   // e.g., "LOGIN", "LOGOUT", "PASSWORD_CHANGE"
+  resource  String?  // e.g., "auth", "user"
+  details   Json?    // Additional context
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  success   Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// Blog-related additions
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Post {
+  id        String     @id @default(uuid())
+  title     String
+  content   String?    @db.Text
+  status    PostStatus @default(DRAFT)
+  authorId  String     @map("author_id")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes     PostLike[]
+  comments  PostComment[]
+
+  @@index([authorId])
+  @@index([status])
+  @@map("posts")
+}
+model Case {
+  id              String    @id @default(uuid())
+  
+  // Bank Data (From Excel)
+  acc_id          String    @unique // Account Number
+  cust_id         String?
+  customer_name   String?
+  phone_number    String?
+  address         String?   @db.Text
+  pincode         String?
+  lat             Float?    // Customer's known location
+  lng             Float?    // Customer's known location
+  
+  // Financials
+  pos_amount      Float     @default(0) // Principal Outstanding
+  overdue_amount  Float     @default(0)
+  dpd             Int       @default(0) // Days Past Due
+  bkt             String?   // Bucket (e.g., BKT-1, SMA-0)
+  product_type    String?   // Agriculture vs Wheels vs Mortgage
+  sub_product_name String?  // Sub-product type
+  bank_name       String?   // Which bank issued this case
+  npa_status      String?   // NPA vs PNPA
+  priority        String?   // High/Medium/Low
+  performance     String?   // Flow/Stab/Norm/RB
+  collection_amount Float   @default(0) // Collection amount
+  toss_amount     Float     @default(0) // Toss amount
+  emi_amount      Float     @default(0) // EMI amount
+  interest        Float     @default(0) // Interest amount
+
+  // Allocation Logic
+  emp_id          String?   // The employee code from the bank file
+  executiveId     String?   @map("executive_id")
+  executive       User?     @relation(fields: [executiveId], references: [id])
+
+  // Tracking
+  status          CaseStatus @default(PENDING)
+  upload_mode     UploadMode? // MODIFICATION or ORIGINAL
+  month           Int       // Current working month (1-12)
+  year            Int       // Current working year (2026)
+  lastVisitAt     DateTime?
+  archived        Boolean   @default(false)
+  
+  // Relations
+  feedbacks       Feedback[]
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Performance Indexes (Crucial for 50k+ rows)
+  @@index([emp_id])
+  @@index([executiveId])
+  @@index([bkt])
+  @@index([product_type])
+  @@index([month, year])
+  @@index([status])
+  @@map("cases")
+}
+
+enum CaseStatus {
+  PENDING
+  VISITED
+  PAID
+  CLOSED
+}
+
+model Feedback {
+  id              String   @id @default(uuid())
+  caseId          String   @map("case_id")
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  executiveId     String   @map("executive_id")
+  executive       User     @relation(fields: [executiveId], references: [id], onDelete: Cascade)
+
+  // GPS Data
+  lat             Float
+  lng             Float
+  distance_from_address Float? // Distance in meters from customer's known address
+  is_fake_visit   Boolean  @default(false) // Flagged if distance > 300m or mismatches
+
+  // Visit Details
+  visit_code      String?  // Visit Code from executive
+  meeting_place   String?  // Where the visit happened (place)
+  custom_place    String?  // Custom location details (customPlace)
+  distance        String?  // Distance from address (distance)
+  who_met         String?  // Relation (whoMet)
+  met_name        String?  // Name of person met (metName)
+  relation        String?  // Relationship description (relation)
+  asset_available String?  // Asset available (assetAvailable)
+  asset_location  String?  // Asset location (assetLocation)
+  asset_status    String?  // Asset condition/reason (assetStatus)
+  remarks         String?  @db.Text // Visit observation (fullFeedback)
+  photo_url       String?  // Link to S3/Cloudinary bucket
+
+  // PTP (Promise to Pay) Tracking
+  ptp_date        DateTime? // Next action/payment date promised by customer
+  ptp_broken      Boolean  @default(false) // Set to true if no action taken by ptp_date
+
+  // Device Fingerprinting
+  device_info     Json? // Captures device details, IP, user agent
+
+  visitedAt       DateTime @default(now())
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([caseId])
+  @@index([executiveId])
+  @@index([is_fake_visit])
+  @@index([ptp_date])
+  @@map("feedbacks")
+}
+
+// PayoutGrid Model - Tree-based structure: Bank -> Product -> BKT -> Target % -> Payout
+model PayoutGrid {
+  id              String   @id @default(uuid())
+  
+  // Tree structure
+  bank            String   // e.g., "HDFC", "ICICI"
+  product         String   // e.g., "Agriculture", "Wheels", "Mortgage"
+  bkt             String   // e.g., "BKT-0", "BKT-1", "SMA-0"
+  target_percent  Float    // Target percentage to achieve
+  
+  // Payout details
+  payout_type     PayoutType @default(FIXED) // FIXED or PERCENTAGE
+  payout_amount   Float    // Fixed amount or percentage
+  
+  // Bonuses
+  norm_bonus      Float    @default(0) // Extra bonus for "Norm" cases
+  rollback_bonus  Float    @default(0) // Extra bonus for "Rollback" cases
+  
+  // Capping
+  max_earning     Float?   // Maximum earning cap per employee for this grid
+  
+  // Metadata
+  createdBy       String   @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([bank, product, bkt, target_percent])
+  @@index([bank])
+  @@index([product])
+  @@index([bkt])
+  @@map("payout_grids")
+}
+
+enum PayoutType {
+  FIXED
+  PERCENTAGE
+}
+
+// Blog Likes Model
+model PostLike {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  userId    String   @map("user_id")
+  user      User     @relation("PostLikes", fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@map("post_likes")
+}
+
+// Blog Comments Model
+model PostComment {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  authorId  String   @map("author_id")
+  author    User     @relation("PostComments", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("post_comments")
+}
+
+// Performance Metrics Model - For aggregated tracking
+model PerformanceMetric {
+  id            String   @id @default(uuid())
+  executiveId   String   @map("executive_id")
+  executive     User     @relation(fields: [executiveId], references: [id], onDelete: Cascade)
+  
+  month         Int      // 1-12
+  year          Int      // 2026
+  
+  // Count-wise metrics
+  total_cases   Int      @default(0) // Volume of cases handled
+  visited_cases Int      @default(0)
+  
+  // POS-wise metrics
+  total_pos     Float    @default(0) // Total Principal Outstanding (Value)
+  recovered_pos Float    @default(0) // Amount recovered
+  
+  // Performance by category
+  bkt           String?  // If tracking by BKT
+  product       String?  // If tracking by Product
+  
+  earnings      Float    @default(0) // Calculated payout for this period
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([executiveId, month, year, bkt, product])
+  @@index([executiveId])
+  @@index([year, month])
+  @@map("performance_metrics")
+}
+
+// Case Upload History Model
+model CaseUpload {
+  id              String   @id @default(uuid())
+  supervisorId    String   @map("supervisor_id")
+  supervisor      User     @relation(fields: [supervisorId], references: [id])
+  
+  filename        String
+  upload_mode     UploadMode @default(ORIGINAL) // MODIFICATION or ORIGINAL
+  total_cases     Int        // Number of cases in this upload
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([supervisorId])
+  @@index([createdAt])
+  @@map("case_uploads")
+}
+
+enum UploadMode {
+  MODIFICATION
+  ORIGINAL
+}
+
+// Subscription Model - For the "Founding Member Program" (₹799/month)
+model Subscription {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Subscription Details
+  plan_name       String   @default("Founding Member Program") // ₹799/month
+  monthly_price   Float    @default(799) // INR
+  
+  // Status
+  status          SubscriptionStatus @default(ACTIVE) // ACTIVE, PAUSED, CANCELLED
+  start_date      DateTime @default(now()) @map("start_date")
+  end_date        DateTime? @map("end_date") // When subscription ends
+  renewal_date    DateTime? @map("renewal_date") // Next renewal date
+  
+  // 6-Month Carryover Logic
+  carryover_active Boolean  @default(false) @map("carryover_active") // True if 15+ shares/month achieved
+  carryover_months Int      @default(0) @map("carryover_months") // Remaining carryover months
+  carryover_until DateTime? @map("carryover_until") // Subscription free until this date
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  referrals       Referral[] @relation("ReferrerSubscription")
+  
+  @@index([userId])
+  @@index([status])
+  @@index([renewal_date])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+// Referral Model - Track referrals with earning potential
+model Referral {
+  id                String   @id @default(uuid())
+  
+ // Referrer & Referee
+referrer_id    String       @map("referrer_id") // Who made the referral
+
+// Add the 'map' property to give these unique names in the database
+referrer       User         @relation("UserAsReferrer", fields: [referrer_id], references: [id], onDelete: Cascade, map: "referral_user_fkey")
+referrer_sub   Subscription @relation("ReferrerSubscription", fields: [referrer_id], references: [userId], map: "referral_subscription_fkey")
+
+referee_id     String?      @map("referee_id") // Who was referred
+referee        User?        @relation("UserAsReferee", fields: [referee_id], references: [id], onDelete: SetNull)
+
+  // Referral Code
+  referral_code     String   @unique @map("referral_code")
+  
+  // Status
+  status            ReferralStatus @default(PENDING) // PENDING, SIGNED_UP, PAID
+  signed_up_at      DateTime? @map("signed_up_at")
+  paid_at           DateTime? @map("paid_at") // When referee made first payment
+  
+  // Commission Tracking
+  commission_rate   Float    @default(0.20) // 20-25% commission (20% = 0.20)
+  commission_amount Float    @default(0) @map("commission_amount") // ₹ earned from this referral
+  payment_status    PaymentStatus @default(PENDING) @map("payment_status") // PENDING, PAID, FAILED
+  paid_to_referrer  DateTime? @map("paid_to_referrer") // When commission was paid to referrer
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@unique([referrer_id, referee_id])
+  @@index([referrer_id])
+  @@index([referee_id])
+  @@index([referral_code])
+  @@index([status])
+  @@index([payment_status])
+  @@map("referrals")
+}
+
+enum ReferralStatus {
+  PENDING      // Referral generated but referee hasn't signed up
+  SIGNED_UP    // Referee signed up with referral code
+  PAID         // Referee made first payment (commission earned)
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+// ReferralShare Model - Track monthly shares/impressions
+model ReferralShare {
+  id              String   @id @default(uuid())
+  
+  user_id         String   @map("user_id")
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  // Monthly tracking
+  month           Int      // 1-12
+  year            Int      // 2026
+  
+  share_count     Int      @default(0) @map("share_count") // Number of shares this month
+  target_shares   Int      @default(15) @map("target_shares") // Target: 15+ per month for carryover
+  
+  // Carryover eligibility
+  target_met      Boolean  @default(false) @map("target_met") // True if share_count >= 15
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([user_id, month, year])
+  @@index([user_id])
+  @@index([year, month])
+  @@index([target_met])
+  @@map("referral_shares")
+}
+
+// Employee Service Control Model - For Manager's "Kill Switch"
+model EmployeeServiceControl {
+  id              String   @id @default(uuid())
+  
+  employee_id     String   @unique @map("employee_id")
+  employee        User     @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  
+  // Service Status
+  is_active       Boolean  @default(true) @map("is_active") // Kill switch: false = all access disabled
+  disabled_reason String?  @map("disabled_reason") // "Absent", "Underperforming", etc.
+  disabled_at     DateTime? @map("disabled_at")
+  
+  // Audit Trail
+  disabled_by     String?  @map("disabled_by") // Manager ID who disabled
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([employee_id])
+  @@index([is_active])
+  @@map("employee_service_controls")
+}

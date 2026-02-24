@@ -1,0 +1,343 @@
+{
+  "info": {
+    "name": "AuthX Enterprise API",
+    "description": "Complete API collection for AuthX Enterprise MERN application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Auth",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "health"]
+            }
+          }
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"exec1@authx.com\",\n  \"username\": \"executive1\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"exec1@authx.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cases",
+      "item": [
+        {
+          "name": "Get All Cases",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/cases",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "cases"]
+            }
+          }
+        },
+        {
+          "name": "Create Case",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"acc_id\": \"ACC-001\",\n  \"customer_name\": \"Rajesh Kumar\",\n  \"phone_number\": \"9876543210\",\n  \"address\": \"123 Farm Lane, Delhi\",\n  \"lat\": 28.7041,\n  \"lng\": 77.1025,\n  \"pos_amount\": 500000,\n  \"overdue_amount\": 250000,\n  \"dpd\": 120,\n  \"bkt\": \"BKT-0\",\n  \"product_type\": \"Agriculture\",\n  \"bank_name\": \"HDFC\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/cases",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "cases"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Performance",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/cases/performance/CASE_ID",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "cases", "performance", "CASE_ID"]
+            }
+          }
+        },
+        {
+          "name": "Allocate Case",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"CASE_ID\",\n  \"emp_id\": \"EMP123\",\n  \"executiveId\": \"EXEC_ID\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/cases/allocate/single",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "cases", "allocate", "single"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feedback & GPS",
+      "item": [
+        {
+          "name": "Get All Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/feedbacks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "feedbacks"]
+            }
+          }
+        },
+        {
+          "name": "Submit Feedback (with GPS)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"CASE_ID\",\n  \"lat\": 28.7041,\n  \"lng\": 77.1025,\n  \"visit_code\": \"V001-20260211\",\n  \"meeting_place\": \"Farm Gate\",\n  \"asset_status\": \"GOOD\",\n  \"ptp_date\": \"2026-02-20\",\n  \"remarks\": \"Customer promised to pay on 20th Feb\",\n  \"photo_url\": \"https://example.com/photo.jpg\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/feedbacks",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "feedbacks"]
+            }
+          }
+        },
+        {
+          "name": "Get Fake Visit Audits",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/feedbacks/audit/fake-visits",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "feedbacks", "audit", "fake-visits"]
+            }
+          }
+        },
+        {
+          "name": "Get PTP Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/feedbacks/alerts/ptp",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "feedbacks", "alerts", "ptp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payout Grid",
+      "item": [
+        {
+          "name": "Get Payout Grids",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/payouts/grids",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "payouts", "grids"]
+            }
+          }
+        },
+        {
+          "name": "Create Payout Grid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bank\": \"HDFC\",\n  \"product\": \"Agriculture\",\n  \"bkt\": \"BKT-0\",\n  \"target_percent\": 90,\n  \"payout_type\": \"FIXED\",\n  \"payout_amount\": 500,\n  \"norm_bonus\": 100,\n  \"rollback_bonus\": 150,\n  \"max_earning\": 50000\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/payouts/grids",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "payouts", "grids"]
+            }
+          }
+        },
+        {
+          "name": "Calculate Earnings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"executiveId\": \"EXEC_ID\",\n  \"month\": 2,\n  \"year\": 2026\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/payouts/calculate-earnings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "payouts", "calculate-earnings"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Blog",
+      "item": [
+        {
+          "name": "Get Published Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/blogs/published",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "blogs", "published"]
+            }
+          }
+        },
+        {
+          "name": "Create Blog Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Best Practices for Agricultural Recovery\",\n  \"content\": \"Here are some key points to improve recovery rates...\",\n  \"excerpt\": \"Quick tips for field executives\",\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/blogs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "blogs"]
+            }
+          }
+        },
+        {
+          "name": "Like Blog Post",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer YOUR_TOKEN"}],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/blogs/POST_ID/like",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "blogs", "POST_ID", "like"]
+            }
+          }
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer YOUR_TOKEN"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Great insights! This helped us improve our recovery rate.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/blogs/POST_ID/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "blogs", "POST_ID", "comments"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
