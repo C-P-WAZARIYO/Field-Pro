@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   // Use your backend URL
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || 'https://field-pro.onrender.com',
   withCredentials: true, // IMPORTANT: This allows cookies to be sent/received
   headers: {
     'Content-Type': 'application/json',
